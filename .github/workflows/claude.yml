@@ -178,7 +178,7 @@ jobs:
             --model ${{ github.event_name == 'pull_request_review' && inputs.respond-model-pr-review || inputs.respond-model-followup }}
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
-        uses: <OWNER>/<PIPELINE_REPO>/actions/log-model@v1
+        uses: btoddb/claude-pipeline/actions/log-model@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
           phase: Response
@@ -186,7 +186,7 @@ jobs:
           github-token: ${{ github.token }}
       - name: Report failure
         if: failure() && steps.claude.outcome == 'failure'
-        uses: <OWNER>/<PIPELINE_REPO>/actions/report-failure@v1
+        uses: btoddb/claude-pipeline/actions/report-failure@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
           phase: Response
@@ -235,7 +235,7 @@ jobs:
             --allowedTools "Read,Glob,Grep${{ inputs.review-allowed-tools != '' && format(',{0}', inputs.review-allowed-tools) || '' }}"
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
-        uses: <OWNER>/<PIPELINE_REPO>/actions/log-model@v1
+        uses: btoddb/claude-pipeline/actions/log-model@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
           phase: Review
@@ -244,7 +244,7 @@ jobs:
           github-token: ${{ github.token }}
       - name: Report failure
         if: failure() && steps.claude.outcome == 'failure'
-        uses: <OWNER>/<PIPELINE_REPO>/actions/report-failure@v1
+        uses: btoddb/claude-pipeline/actions/report-failure@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
           phase: Review
@@ -280,7 +280,7 @@ jobs:
             --effort ${{ inputs.plan-effort }}
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
-        uses: <OWNER>/<PIPELINE_REPO>/actions/log-model@v1
+        uses: btoddb/claude-pipeline/actions/log-model@v1
         with:
           number: ${{ github.event.issue.number }}
           phase: Planning
@@ -422,7 +422,7 @@ jobs:
           fi
           echo "target=$target" >> "$GITHUB_OUTPUT"
         id: target
-      - uses: <OWNER>/<PIPELINE_REPO>/actions/log-model@v1
+      - uses: btoddb/claude-pipeline/actions/log-model@v1
         if: always() && steps.claude.outputs.execution_file != ''
         with:
           number: ${{ steps.target.outputs.target }}
@@ -430,7 +430,7 @@ jobs:
           execution-file: ${{ steps.claude.outputs.execution_file }}
           effort: ${{ inputs.implement-effort }}
           github-token: ${{ github.token }}
-      - uses: <OWNER>/<PIPELINE_REPO>/actions/report-failure@v1
+      - uses: btoddb/claude-pipeline/actions/report-failure@v1
         if: failure() && steps.claude.outcome == 'failure'
         with:
           number: ${{ steps.target.outputs.target }}
