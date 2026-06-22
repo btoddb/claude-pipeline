@@ -44,9 +44,9 @@ runs:
           # isn't formally documented, so pull any error-ish text out of the last
           # result object rather than assuming a fixed shape.
           error_text="$(jq -rs '
-              [.. | objects | select(has("is_error") or has("error") or has("subtype"))]
+              [.. | objects | select(has("is_error") or has("errors") or has("subtype"))]
               | last
-              | [.error, .subtype, (if .is_error == true then "is_error" else empty end)]
+              | [.result, (.errors // [] | join("; ")), .subtype, (if .is_error == true then "is_error" else empty end)]
               | map(select(. != null and . != ""))
               | join(" ")
             ' "$EXECUTION_FILE" 2>/dev/null || true)"

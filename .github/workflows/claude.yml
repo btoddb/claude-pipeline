@@ -215,6 +215,14 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --model ${{ github.event_name == 'pull_request_review' && inputs.respond-model-pr-review || inputs.respond-model-followup }}
+      - name: Check Claude result
+        id: check_result
+        if: always() && steps.claude.outputs.execution_file != ''
+        run: |
+          if jq -e 'any(.[]; .type == "result" and .is_error == true)' "${{ steps.claude.outputs.execution_file }}" >/dev/null; then
+            echo "::error::Claude returned an error result (is_error: true) before producing usable output."
+            exit 1
+          fi
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
         uses: btoddb/claude-pipeline/actions/log-model@v1
@@ -224,7 +232,7 @@ jobs:
           execution-file: ${{ steps.claude.outputs.execution_file }}
           github-token: ${{ github.token }}
       - name: Report failure
-        if: failure() && steps.claude.outcome == 'failure'
+        if: always() && (steps.claude.outcome == 'failure' || steps.check_result.outcome == 'failure')
         uses: btoddb/claude-pipeline/actions/report-failure@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
@@ -272,6 +280,14 @@ jobs:
             --model ${{ inputs.review-model }}
             --effort ${{ inputs.review-effort }}
             --allowedTools "Read,Glob,Grep${{ inputs.review-allowed-tools != '' && format(',{0}', inputs.review-allowed-tools) || '' }}"
+      - name: Check Claude result
+        id: check_result
+        if: always() && steps.claude.outputs.execution_file != ''
+        run: |
+          if jq -e 'any(.[]; .type == "result" and .is_error == true)' "${{ steps.claude.outputs.execution_file }}" >/dev/null; then
+            echo "::error::Claude returned an error result (is_error: true) before producing usable output."
+            exit 1
+          fi
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
         uses: btoddb/claude-pipeline/actions/log-model@v1
@@ -282,7 +298,7 @@ jobs:
           effort: ${{ inputs.review-effort }}
           github-token: ${{ github.token }}
       - name: Report failure
-        if: failure() && steps.claude.outcome == 'failure'
+        if: always() && (steps.claude.outcome == 'failure' || steps.check_result.outcome == 'failure')
         uses: btoddb/claude-pipeline/actions/report-failure@v1
         with:
           number: ${{ github.event.issue.number || github.event.pull_request.number }}
@@ -317,6 +333,14 @@ jobs:
           claude_args: |
             --model ${{ inputs.plan-model }}
             --effort ${{ inputs.plan-effort }}
+      - name: Check Claude result
+        id: check_result
+        if: always() && steps.claude.outputs.execution_file != ''
+        run: |
+          if jq -e 'any(.[]; .type == "result" and .is_error == true)' "${{ steps.claude.outputs.execution_file }}" >/dev/null; then
+            echo "::error::Claude returned an error result (is_error: true) before producing usable output."
+            exit 1
+          fi
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
         uses: btoddb/claude-pipeline/actions/log-model@v1
@@ -335,7 +359,7 @@ jobs:
           REPO: ${{ github.repository }}
           STARTED_AT: ${{ steps.snapshot.outputs.started_at }}
           PLAN_ONLY: ${{ needs.dispatch.outputs.plan_only }}
-          CLAUDE_OUTCOME: ${{ steps.claude.outcome }}
+          CLAUDE_OUTCOME: ${{ (steps.check_result.outcome == 'failure' && 'failure') || steps.claude.outcome }}
           MAINTAINER: ${{ inputs.maintainer }}
         run: |
           set -euo pipefail
@@ -448,6 +472,14 @@ jobs:
             --model ${{ inputs.implement-model }}
             --effort ${{ inputs.implement-effort }}
             --allowedTools "Read,Edit,Write,Glob,Grep,Bash(gh pr create *)${{ inputs.implement-allowed-tools != '' && format(',{0}', inputs.implement-allowed-tools) || '' }}"
+      - name: Check Claude result
+        id: check_result
+        if: always() && steps.claude.outputs.execution_file != ''
+        run: |
+          if jq -e 'any(.[]; .type == "result" and .is_error == true)' "${{ steps.claude.outputs.execution_file }}" >/dev/null; then
+            echo "::error::Claude returned an error result (is_error: true) before producing usable output."
+            exit 1
+          fi
       - name: Log actual model used
         if: always() && steps.claude.outputs.execution_file != ''
         env:
@@ -470,7 +502,7 @@ jobs:
           effort: ${{ inputs.implement-effort }}
           github-token: ${{ github.token }}
       - uses: btoddb/claude-pipeline/actions/report-failure@v1
-        if: failure() && steps.claude.outcome == 'failure'
+        if: always() && (steps.claude.outcome == 'failure' || steps.check_result.outcome == 'failure')
         with:
           number: ${{ steps.target.outputs.target }}
           phase: Implementation
