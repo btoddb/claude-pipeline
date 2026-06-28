@@ -36,9 +36,11 @@
 7. **constraint CW-11** `scripts/ship` is the per-repository release hook. The
    pipeline's `templates/ship.template` is a reference implementation that
    creates a pre-release by default.
-8. **constraint CW-12** Passing `--public-release` to `@claude ship` forwards the
-   flag to `scripts/ship`, allowing the repository release hook to create a
-   public latest release.
+8. **recommendation CW-12** Client `scripts/ship` implementations should support
+   `--public-release`, `--bump-patch`, `--bump-minor`, and `--bump-major`. The
+   workflow forwards these flags to `scripts/ship`; `--public-release` creates a
+   public latest release, and exactly one bump flag is required to increment the
+   release version by patch, minor, or major.
 9. **constraint CW-13** `scripts/ship` in `btoddb/claude-pipeline` keeps the
    reusable-workflow release behavior by floating the `v1` major tag. When it
    runs in GitHub Actions, it skips the interactive confirmation prompt
