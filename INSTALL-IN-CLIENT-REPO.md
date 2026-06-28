@@ -40,7 +40,7 @@ gh api -X PUT repos/btoddb/<repo>/actions/permissions/workflow \
 
 - templates/caller-claude.yml.template to <repo>/.github/workflows/claude-caller.yml
 - CLAUDE-pipeline.md to <repo>/CLAUDE.md (or paste into existing)
-- templates/ship.template to <repo>/scripts/ship (required for `@claude ship`)
+- templates/ship.template to <repo>/scripts/ship (required for `@claude ship`; supports `--public-release`, `--bump-patch`, `--bump-minor`, and `--bump-major`)
 
 ## Install Claude
 

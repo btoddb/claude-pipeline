@@ -6,25 +6,42 @@
 # script. You can also run it directly from a clean main branch.
 #
 # Usage:
-#   scripts/ship                    # pre-release  (label: pre-release, title: <tag>-beta)
-#   scripts/ship --public-release   # full release  (label: latest,       title: <tag>)
-#   scripts/ship --dry-run          # print every command, change nothing
+#   scripts/ship                         # pre-release with patch bump
+#   scripts/ship --public-release        # full release  (label: latest, title: <tag>)
+#   scripts/ship --bump-patch            # increment X.Y.Z to X.Y.(Z+1), default
+#   scripts/ship --bump-minor            # increment X.Y.Z to X.(Y+1).0
+#   scripts/ship --bump-major            # increment X.Y.Z to (X+1).0.0
+#   scripts/ship --dry-run               # print every command, change nothing
 #
 # Version is resolved in order:
 #   1. VERSION file in repo root  (single line, e.g. "1.2.3" or "v1.2.3")
-#   2. Latest git vX.Y.Z tag + patch bump  (v1.2.3 → v1.2.4)
+#   2. Latest git vX.Y.Z tag + selected bump
 #   3. v0.1.0 if no prior semver tags exist
 #
 set -euo pipefail
 
 PUBLIC_RELEASE=false
 DRY_RUN=false
+BUMP=patch
+BUMP_SET=false
+
+set_bump() {
+  if $BUMP_SET; then
+    echo "ship: choose only one bump flag" >&2
+    exit 2
+  fi
+  BUMP="$1"
+  BUMP_SET=true
+}
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --public-release) PUBLIC_RELEASE=true; shift ;;
+    --bump-patch)     set_bump patch;      shift ;;
+    --bump-minor)     set_bump minor;      shift ;;
+    --bump-major)     set_bump major;      shift ;;
     --dry-run)        DRY_RUN=true;        shift ;;
-    -h|--help)        sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)        sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "ship: unknown argument '$1' (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -51,7 +68,11 @@ else
     version="v0.1.0"
   else
     IFS='.' read -r vmajor vminor vpatch <<< "${latest#v}"
-    version="v${vmajor}.${vminor}.$((vpatch + 1))"
+    case "$BUMP" in
+      patch) version="v${vmajor}.${vminor}.$((vpatch + 1))" ;;
+      minor) version="v${vmajor}.$((vminor + 1)).0" ;;
+      major) version="v$((vmajor + 1)).0.0" ;;
+    esac
   fi
 fi
 

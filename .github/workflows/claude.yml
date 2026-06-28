@@ -207,13 +207,13 @@ jobs:
           set -euo pipefail
           case "$REASON" in
             pr_pipeline)
-              body=$'🤖 `@claude plan` and `@claude implement` run on **issues**, not pull requests — there is no plan/implement pipeline for a PR, so nothing ran.\n\nOn a pull request you can:\n- comment `@claude review` for a code review,\n- comment `@claude revise <what to change>` to iterate on this PR\'s code,\n- comment `@claude ship [--force] [--public-release]` to merge and release, or\n- comment `@claude <your question or request>` and I will respond here.\n\nTo build something new, open an issue and comment `@claude`.' ;;
+              body=$'🤖 `@claude plan` and `@claude implement` run on **issues**, not pull requests — there is no plan/implement pipeline for a PR, so nothing ran.\n\nOn a pull request you can:\n- comment `@claude review` for a code review,\n- comment `@claude revise <what to change>` to iterate on this PR\'s code,\n- comment `@claude ship [--force] [--public-release] [--bump-patch|--bump-minor|--bump-major]` to merge and release, or\n- comment `@claude <your question or request>` and I will respond here.\n\nTo build something new, open an issue and comment `@claude`.' ;;
             issue_review)
               body=$'🤖 `@claude review` runs on **pull requests**, not issues, so nothing ran.\n\nOn an issue, comment `@claude` (full pipeline), `@claude plan`, or `@claude implement`.' ;;
             issue_ship)
               body=$'🤖 `@claude ship` runs on **pull requests**, not issues, so nothing ran.\n\nComment `@claude ship` on an open pull request to squash-merge it and cut a release.' ;;
             *)
-              body=$'🤖 I did not recognize that `@claude` command, so nothing ran. Recognized commands:\n- `@claude` — full pipeline (plan → implement) on an issue\n- `@claude plan` — planning only (issue)\n- `@claude implement` — implement the latest plan (issue)\n- `@claude review` — review a pull request\n- `@claude revise` — iterate on a pull request\'s code\n- `@claude ship [--force] [--public-release]` — merge a pull request and cut a release\n\nOn a pull request, `@claude <message>` responds to the conversation.' ;;
+              body=$'🤖 I did not recognize that `@claude` command, so nothing ran. Recognized commands:\n- `@claude` — full pipeline (plan → implement) on an issue\n- `@claude plan` — planning only (issue)\n- `@claude implement` — implement the latest plan (issue)\n- `@claude review` — review a pull request\n- `@claude revise` — iterate on a pull request\'s code\n- `@claude ship [--force] [--public-release] [--bump-patch|--bump-minor|--bump-major]` — merge a pull request and cut a release\n\nOn a pull request, `@claude <message>` responds to the conversation.' ;;
           esac
           gh issue comment "$NUMBER" --repo "$REPO" --body "$body"
 
