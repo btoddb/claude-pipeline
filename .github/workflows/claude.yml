@@ -75,7 +75,7 @@ on:
       plan-effort:
         type: string
         required: false
-        default: "xhigh"
+        default: "high"
       implement-effort:
         type: string
         required: false
