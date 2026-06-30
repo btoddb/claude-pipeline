@@ -93,7 +93,7 @@ out, so GitHub CLI never prompts or fails for missing required input in CI.
 
 ### Revision (Sonnet)
 - `@claude revise <feedback>` runs on an **open PR** and is the only PR command that changes code. It checks out the PR's head branch, applies the requested changes, and commits **to that same branch** — it does not open a new PR.
-- It shares `implement`'s toolset (the `IMPL_TOOLS` list in the workflow + the repo's `implement-allowed-tools`) and runs the same language **setup + install** steps, so lint, tests, `scripts/deploy.sh`, and `npm` are all available while iterating.
+- It shares `implement`'s toolset (the `IMPL_TOOLS` list in the workflow + the repo's `implement-allowed-tools`) and runs the same language **setup + install** steps, so lint, tests, `scripts/deploy-card`, and `npm` are all available while iterating.
 - It can file follow-up issues with `gh issue create` for work discovered while revising that does not belong in the current PR.
 - **constraint** Read the PR thread and the triggering comment first; make the change the feedback asks for, then push it to the PR branch. Don't open a second PR for the same work.
 

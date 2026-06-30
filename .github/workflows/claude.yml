@@ -105,7 +105,7 @@ env:
   PLAN_TOOLS: "Read,Glob,Grep,Bash(gh issue create *)"
   RESPOND_TOOLS: "Read,Glob,Grep,Bash(gh issue create *)"
   REVIEW_TOOLS: "Read,Glob,Grep,Bash(python3 -m pytest*),Bash(gh issue create *)"
-  IMPL_TOOLS: "Read,Edit,Write,Glob,Grep,Bash(python3 -m pytest*),Bash(scripts/lint *),Bash(gh pr create *),Bash(gh issue create *),Bash(scripts/deploy.sh:*),Bash(npm *)"
+  IMPL_TOOLS: "Read,Edit,Write,Glob,Grep,Bash(python3 -m pytest*),Bash(scripts/lint *),Bash(gh pr create *),Bash(gh issue create *),Bash(scripts/deploy-card:*),Bash(npm *)"
 
 jobs:
   dispatch:
